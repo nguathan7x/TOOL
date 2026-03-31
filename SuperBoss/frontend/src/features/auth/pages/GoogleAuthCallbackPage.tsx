@@ -6,7 +6,7 @@ import { AuthLayout } from '../components/AuthLayout';
 import { LogoMark } from '../components/LogoMark';
 import { useAuth } from '../hooks/useAuth';
 import { googleOAuthState } from '../utils/googleOAuthState';
-
+//Dang nhap
 export function GoogleAuthCallbackPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
