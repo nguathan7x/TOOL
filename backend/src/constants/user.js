@@ -1,0 +1,21 @@
+export const GLOBAL_ROLES = {
+  SUPER_ADMIN: 'SUPER_ADMIN'
+};
+
+export const USER_TYPES = {
+  INTERNAL: 'INTERNAL',
+  CLIENT: 'CLIENT',
+  EXTERNAL_SUPPORT: 'EXTERNAL_SUPPORT'
+};
+
+export const USER_SPECIALIZATIONS = {
+  DEV: 'DEV',
+  QA: 'QA',
+  TESTER: 'TESTER',
+  DESIGNER: 'DESIGNER',
+  BA: 'BA'
+};
+
+export const USER_TYPE_VALUES = Object.values(USER_TYPES);
+export const USER_SPECIALIZATION_VALUES = Object.values(USER_SPECIALIZATIONS);
+export const GLOBAL_ROLE_VALUES = Object.values(GLOBAL_ROLES);
