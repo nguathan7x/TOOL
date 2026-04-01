@@ -724,6 +724,68 @@ export function ProjectListPage() {
     }));
   }
 
+  function getBoardOrderedTasks(tasks: ApiTask[], columnKey: string) {
+    return tasks
+      .filter((task) => normalizeStatus(task.status) === normalizeStatus(columnKey))
+      .sort((a, b) => (a.backlogRank ?? a.sequenceNumber) - (b.backlogRank ?? b.sequenceNumber));
+  }
+
+  function buildBoardMoveTasks(tasks: ApiTask[], draggedTaskId: string, nextStatus: string, targetTaskId?: string | null) {
+    const draggedTask = tasks.find((task) => task.id === draggedTaskId);
+
+    if (!draggedTask) {
+      return null;
+    }
+
+    const normalizedNextStatus = normalizeStatus(nextStatus);
+    const remainingTasks = tasks.map((task) =>
+      task.id === draggedTaskId
+        ? {
+            ...task,
+            status: nextStatus
+          }
+        : task
+    );
+
+    const destinationTasks = getBoardOrderedTasks(
+      remainingTasks.filter((task) => task.id !== draggedTaskId),
+      normalizedNextStatus
+    );
+
+    const insertionIndex = targetTaskId
+      ? destinationTasks.findIndex((task) => task.id === targetTaskId)
+      : destinationTasks.length;
+
+    const safeInsertionIndex = insertionIndex >= 0 ? insertionIndex : destinationTasks.length;
+    const reorderedDestinationTasks = [...destinationTasks];
+    const movedTask = {
+      ...draggedTask,
+      status: nextStatus
+    };
+
+    reorderedDestinationTasks.splice(safeInsertionIndex, 0, movedTask);
+
+    const reorderedDestinationIds = reorderedDestinationTasks.map((task) => task.id);
+    const reorderedDestinationIdSet = new Set(reorderedDestinationIds);
+    const backlogRankByTaskId = new Map(reorderedDestinationIds.map((taskId, index) => [taskId, index + 1]));
+
+    const nextTasks = remainingTasks.map((task) =>
+      reorderedDestinationIdSet.has(task.id)
+        ? {
+            ...task,
+            status: task.id === draggedTaskId ? nextStatus : task.status,
+            backlogRank: backlogRankByTaskId.get(task.id) ?? task.backlogRank
+          }
+        : task
+    );
+
+    return {
+      nextTasks,
+      reorderedDestinationIds,
+      movedTask
+    };
+  }
+
   async function handleTransitionTask(task: ApiTask, nextStatus: string) {
     if (!tokens?.accessToken || projectExecutionLocked || normalizeStatus(task.status) === normalizeStatus(nextStatus)) {
       return;
@@ -739,57 +801,64 @@ export function ProjectListPage() {
     }
   }
 
-  async function handleBoardDrop(nextStatus: string) {
+  async function handleBoardMove(columnKey: string, targetTaskId?: string | null) {
     if (!draggedBoardTaskId || !tokens?.accessToken) {
-      return;
-    }
-
-    const task = state.tasks.find((item) => item.id === draggedBoardTaskId);
-    setDraggedBoardTaskId(null);
-    setDragOverColumnKey(null);
-    setDragOverTaskId(null);
-
-    if (!task || !canMoveTask(task, user?.id, currentMembership?.role, ownedSignals.project, projectExecutionLocked)) {
-      return;
-    }
-
-    await handleTransitionTask(task, nextStatus);
-  }
-
-  async function handleReorderWithinColumn(columnKey: string, targetTaskId: string) {
-    if (!draggedBoardTaskId || !tokens?.accessToken || draggedBoardTaskId === targetTaskId) {
       return;
     }
 
     const draggedTask = state.tasks.find((item) => item.id === draggedBoardTaskId);
 
-    if (!draggedTask || !canMoveTask(draggedTask, user?.id, currentMembership?.role, ownedSignals.project)) {
+    if (!draggedTask || !selectedProject || !canMoveTask(draggedTask, user?.id, currentMembership?.role, ownedSignals.project, projectExecutionLocked)) {
       return;
     }
 
-    const columnTaskIds = state.tasks
-      .filter((task) => normalizeStatus(task.status) === normalizeStatus(columnKey))
-      .sort((a, b) => (a.backlogRank ?? a.sequenceNumber) - (b.backlogRank ?? b.sequenceNumber))
-      .map((task) => task.id);
-
-    const fromIndex = columnTaskIds.indexOf(draggedBoardTaskId);
-    const targetIndex = columnTaskIds.indexOf(targetTaskId);
-
-    if (fromIndex < 0 || targetIndex < 0) {
-      return;
-    }
-
-    columnTaskIds.splice(targetIndex, 0, columnTaskIds.splice(fromIndex, 1)[0]);
-
-    try {
-      const updatedTasks = await projectsApi.reorderTasks(tokens.accessToken, selectedProject!.id, columnTaskIds);
-      mergeTasksInState(updatedTasks);
-    } catch (nextError) {
-      setTaskMetaError(nextError instanceof Error ? nextError.message : 'Failed to reorder tasks in this stage');
-    } finally {
+    if (draggedBoardTaskId === targetTaskId) {
       setDraggedBoardTaskId(null);
       setDragOverColumnKey(null);
       setDragOverTaskId(null);
+      return;
+    }
+
+    const previousTasks = state.tasks;
+    const movePlan = buildBoardMoveTasks(previousTasks, draggedBoardTaskId, columnKey, targetTaskId);
+
+    if (!movePlan) {
+      return;
+    }
+
+    setState((current) => ({
+      ...current,
+      tasks: movePlan.nextTasks
+    }));
+    setDraggedBoardTaskId(null);
+    setDragOverColumnKey(null);
+    setDragOverTaskId(null);
+
+    try {
+      let transitionedTask: ApiTask | null = null;
+
+      if (normalizeStatus(draggedTask.status) !== normalizeStatus(columnKey)) {
+        transitionedTask = await projectsApi.transitionTask(tokens.accessToken, draggedTask.id, { status: columnKey });
+      }
+
+      let reorderedTasks: ApiTask[] = [];
+      if (movePlan.reorderedDestinationIds.length > 1) {
+        reorderedTasks = await projectsApi.reorderTasks(tokens.accessToken, selectedProject.id, movePlan.reorderedDestinationIds);
+      }
+
+      const mergedUpdates = transitionedTask
+        ? [...reorderedTasks.filter((task) => task.id !== transitionedTask!.id), transitionedTask]
+        : reorderedTasks;
+
+      if (mergedUpdates.length > 0) {
+        mergeTasksInState(mergedUpdates);
+      }
+    } catch (nextError) {
+      setState((current) => ({
+        ...current,
+        tasks: previousTasks
+      }));
+      setTaskMetaError(nextError instanceof Error ? nextError.message : 'Failed to move task on the board');
     }
   }
 
@@ -990,7 +1059,7 @@ export function ProjectListPage() {
         onTaskDrop={(columnKey, taskId, event) => {
           event.preventDefault();
           event.stopPropagation();
-          void handleReorderWithinColumn(columnKey, taskId);
+          void handleBoardMove(columnKey, taskId);
         }}
         onColumnDragOver={(columnKey, event) => {
           if (draggedBoardTaskId) {
@@ -1007,12 +1076,12 @@ export function ProjectListPage() {
         }}
         onColumnDrop={(columnKey, event) => {
           event.preventDefault();
-          void handleBoardDrop(columnKey);
+          void handleBoardMove(columnKey);
         }}
         onTailDrop={(columnKey, event) => {
           event.preventDefault();
           event.stopPropagation();
-          void handleBoardDrop(columnKey);
+          void handleBoardMove(columnKey);
         }}
       />
     );
