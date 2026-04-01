@@ -35,9 +35,12 @@ export function ForgotPasswordPage() {
     setGoogleLoading(true);
     setError('');
     setMessage('');
+
     window.setTimeout(() => {
       setGoogleLoading(false);
-      setMessage('Google recovery placeholder is ready. You can wire account recovery or OAuth account lookup here later.');
+      setMessage(
+        'Google recovery placeholder is ready. You can connect account lookup or OAuth-based recovery here later.'
+      );
     }, 500);
   }
 
@@ -52,30 +55,47 @@ export function ForgotPasswordPage() {
     }
 
     setIsSubmitting(true);
+
     window.setTimeout(() => {
       setIsSubmitting(false);
-      setMessage(`Password recovery placeholder sent for ${email.trim()}. Connect this screen to your reset-email API later.`);
+      setMessage(
+        `Password recovery placeholder sent for ${email.trim()}. Connect this screen to your reset-email API later.`
+      );
     }, 700);
   }
 
   return (
     <AuthLayout
-      eyebrow="Recovery flow"
-      title="Recover access without breaking the premium auth experience."
-      description="Use this placeholder screen to validate the reset-password UX today, then plug in email delivery and token-based recovery when the backend flow is ready."
-      badge={<div className="rounded-full border border-white/12 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/85">Future reset flow</div>}
+      eyebrow="Account recovery"
+      title="Recover access with a clean, professional flow that matches the rest of the auth experience."
+      description="Use your work email to continue the recovery process and keep the password reset journey polished while the backend reset flow is being connected."
+      badge={
+        <div className="rounded-full border border-emerald-200/25 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/85 backdrop-blur">
+          Secure recovery flow
+        </div>
+      }
     >
       <AuthCard>
         <AuthHeader
           label="Forgot password"
-          title="Regain access to your workspace"
-          description="This is a product-quality placeholder for the recovery flow. It keeps the auth system feeling complete while the reset API is still pending."
-          brandSlot={<LogoMark compact className="border-[#dbe6d8] bg-[#f7faf5] text-[#163d2c] [&_p]:text-[#163d2c]/75" />}
+          title="Recover your SuperBoss account"
+          description="This placeholder keeps the recovery experience complete and production-like while reset email delivery and token verification are still being finalized."
+          brandSlot={
+            <LogoMark
+              compact
+              className="border-emerald-100 bg-gradient-to-br from-[#f7faf5] to-[#eef6ef] text-[#163d2c] shadow-sm [&_p]:text-[#163d2c]/75"
+            />
+          }
         />
 
-        <div className="mt-8 space-y-5">
-          <div className="rounded-[1.6rem] border border-[#dbe6d8] bg-[#f6faf4] p-4 text-sm text-slate-600 auth-fade-up" style={{ ['--delay' as string]: '220ms' }}>
-            Enter the email tied to your account and we will reserve this flow for reset-email delivery later. The interaction is intentionally placeholder-only for now.
+        <div className="mt-8 space-y-6">
+          <div
+            className="rounded-3xl border border-slate-200 bg-slate-50/80 p-5 text-sm leading-6 text-slate-600 auth-fade-up"
+            style={{ ['--delay' as string]: '220ms' }}
+          >
+            Enter the email address linked to your workspace account. This screen is currently a
+            placeholder for reset-email delivery, but the interaction is designed to feel complete
+            and consistent with the rest of the authentication flow.
           </div>
 
           <SocialAuthButton
@@ -84,13 +104,13 @@ export function ForgotPasswordPage() {
             disabled={googleLoading || isSubmitting}
           />
 
-          <Divider label="or request recovery" />
+          <Divider label="or recover with email" />
 
-          <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+          <form className="space-y-5" onSubmit={handleSubmit} noValidate>
             <InputField
               label="Work email"
               type="email"
-              placeholder="you@company.com"
+              placeholder="name@company.com"
               autoComplete="email"
               value={email}
               onBlur={() => setTouched(true)}
@@ -99,15 +119,19 @@ export function ForgotPasswordPage() {
             />
 
             {error ? (
-              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div>
+              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                {error}
+              </div>
             ) : null}
 
             {message ? (
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{message}</div>
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                {message}
+              </div>
             ) : null}
 
             <SubmitButton type="submit" disabled={isSubmitting || googleLoading}>
-              {isSubmitting ? 'Preparing recovery...' : 'Send recovery placeholder'}
+              {isSubmitting ? 'Preparing recovery...' : 'Send recovery link'}
             </SubmitButton>
           </form>
         </div>
@@ -115,11 +139,14 @@ export function ForgotPasswordPage() {
         <div className="mt-6">
           <AuthFooter
             prompt="Remembered your password?"
-            action={<Link to="/login" className="transition hover:text-[#102f22]">Back to sign in</Link>}
+            action={
+              <Link to="/login" className="font-semibold transition hover:text-[#102f22]">
+                Back to sign in
+              </Link>
+            }
           />
         </div>
       </AuthCard>
     </AuthLayout>
   );
 }
-
