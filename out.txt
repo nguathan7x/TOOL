@@ -1,0 +1,35 @@
+remote: error: GH013: Repository rule violations found for refs/heads/main.        
+remote: 
+remote: - GITHUB PUSH PROTECTION        
+remote:   —————————————————————————————————————————        
+remote:     Resolve the following violations before pushing again        
+remote: 
+remote:     - Push cannot contain secrets        
+remote: 
+remote:             
+remote:      (?) Learn how to resolve a blocked push        
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push        
+remote:             
+remote:             
+remote:       —— Google OAuth Client ID ————————————————————————————        
+remote:        locations:        
+remote:          - commit: 420c27cc58788f156608b199ea362831f9d19043        
+remote:            path: backend/.env:9        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/nguathan7x/TOOL/security/secret-scanning/unblock-secret/3BlkxgkZ0UwztVZcloFJO6E8MaS        
+remote:             
+remote:             
+remote:       —— Google OAuth Client Secret ————————————————————————        
+remote:        locations:        
+remote:          - commit: 420c27cc58788f156608b199ea362831f9d19043        
+remote:            path: backend/.env:10        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/nguathan7x/TOOL/security/secret-scanning/unblock-secret/3BlkxkNHQcvufXEGAqH9eD3yWac        
+remote:             
+remote: 
+remote: 
+To https://github.com/nguathan7x/TOOL.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/nguathan7x/TOOL.git'
