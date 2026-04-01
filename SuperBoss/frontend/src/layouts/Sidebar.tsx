@@ -3,10 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Avatar } from '../components/ui/Avatar';
 import { Badge } from '../components/ui/Badge';
 import { useAuth } from '../features/auth/hooks/useAuth';
-import { adminApi } from '../features/admin/api/adminApi';
 import type { Project } from '../features/admin/types';
-import { projectsApi, type ApiTask } from '../features/projects/api/projectsApi';
+import { type ApiTask } from '../features/projects/api/projectsApi';
 import { getSharedProjectAcceptedAt, isRecentlyAcceptedSharedProject } from '../features/projects/shared-projects';
+import { loadVisibleWorkGraph } from '../features/workspaces/api/visible-work-graph';
 import { setStoredWorkspaceId } from '../features/workspaces/store/workspaceSelection';
 import { useWorkspaceData } from '../features/workspaces/store/WorkspaceDataContext';
 import { cn } from '../lib/cn';
@@ -65,88 +65,56 @@ export function Sidebar() {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadSharedProjectsIndex() {
-      if (!tokens?.accessToken || workspaces.length === 0) {
+    async function loadSidebarGraph() {
+      if (!tokens?.accessToken) {
         setSharedProjectsIndex([]);
-        return;
-      }
-
-      try {
-        const workspaceEntries = await Promise.all(
-          workspaces.map(async (workspace) => {
-            const [spacesResponse, projectsResponse] = await Promise.all([
-              adminApi.listSpaces(tokens.accessToken, workspace.id),
-              adminApi.listProjects(tokens.accessToken, workspace.id)
-            ]);
-
-            const visibleSpaces = spacesResponse.items.filter((space) => space.isActive);
-            const spaceNameById = new Map(visibleSpaces.map((space) => [space.id, space.name]));
-
-            return projectsResponse.items
-              .filter((project) => !project.isArchived)
-              .map((project) => ({
-                id: project.id,
-                name: project.name,
-                key: project.key,
-                workspaceId: workspace.id,
-                workspaceName: workspace.name,
-                spaceId: project.spaceId,
-                spaceName: spaceNameById.get(project.spaceId) ?? 'Unknown space',
-                createdByCurrentUser: project.createdBy === user?.id,
-                acceptedAt: getSharedProjectAcceptedAt(project.id),
-                isNew: isRecentlyAcceptedSharedProject(project.id)
-              }));
-          })
-        );
-
-        if (!cancelled) {
-          const deduped = Array.from(
-            new Map(workspaceEntries.flat().map((project) => [project.id, project])).values()
-          );
-          setSharedProjectsIndex(deduped);
-        }
-      } catch {
-        if (!cancelled) {
-          setSharedProjectsIndex([]);
-        }
-      }
-    }
-
-    loadSharedProjectsIndex();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [tokens?.accessToken, workspaces, user?.id]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadVisibleTasks() {
-      if (!tokens?.accessToken || projects.length === 0) {
         setTasks([]);
         return;
       }
 
       try {
-        const taskGroups = await Promise.all(projects.map((project) => projectsApi.listTasks(tokens.accessToken, project.id)));
+        const graph = await loadVisibleWorkGraph(tokens.accessToken);
 
         if (!cancelled) {
-          setTasks(taskGroups.flatMap((group) => group.items));
+          const workspaceNameById = new Map(graph.workspaces.map((workspace) => [workspace.id, workspace.name]));
+          const spaceNameById = new Map(graph.spaces.map((space) => [space.id, space.name]));
+          const dedupedProjects = Array.from(
+            new Map(
+              graph.projects.map((project) => [
+                project.id,
+                {
+                  id: project.id,
+                  name: project.name,
+                  key: project.key,
+                  workspaceId: project.workspaceId,
+                  workspaceName: workspaceNameById.get(project.workspaceId) ?? 'Unknown workspace',
+                  spaceId: project.spaceId,
+                  spaceName: spaceNameById.get(project.spaceId) ?? 'Unknown space',
+                  createdByCurrentUser: project.createdBy === user?.id,
+                  acceptedAt: getSharedProjectAcceptedAt(project.id),
+                  isNew: isRecentlyAcceptedSharedProject(project.id)
+                }
+              ])
+            ).values()
+          );
+
+          setSharedProjectsIndex(dedupedProjects);
+          setTasks(graph.tasks);
         }
       } catch {
         if (!cancelled) {
+          setSharedProjectsIndex([]);
           setTasks([]);
         }
       }
     }
 
-    void loadVisibleTasks();
+    void loadSidebarGraph();
 
     return () => {
       cancelled = true;
     };
-  }, [projects, tokens?.accessToken]);
+  }, [tokens?.accessToken, user?.id]);
 
 
 

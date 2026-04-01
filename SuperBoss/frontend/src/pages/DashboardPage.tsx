@@ -29,7 +29,6 @@ type DeliverySummary = {
   workspaces: Workspace[];
   spaces: Space[];
   projects: Project[];
-  memberships: ProjectMembership[];
   tasks: ApiTask[];
 };
 
@@ -133,14 +132,13 @@ function DeliveryDashboard() {
       setError(null);
 
       try {
-        const graph = await loadVisibleWorkGraph(tokens.accessToken, { includeProjectMemberships: true });
+        const graph = await loadVisibleWorkGraph(tokens.accessToken);
 
         if (!cancelled) {
           setSummary({
             workspaces: graph.workspaces,
             spaces: graph.spaces,
             projects: graph.projects,
-            memberships: graph.projectMemberships,
             tasks: graph.tasks
           });
         }
@@ -162,14 +160,6 @@ function DeliveryDashboard() {
     };
   }, [tokens?.accessToken]);
 
-  const currentMembership = useMemo(() => {
-    if (!summary || !user) {
-      return null;
-    }
-
-    return summary.memberships.find((item) => item.userId === user.id && item.status === 'ACTIVE') ?? null;
-  }, [summary, user]);
-
   const myTasks = useMemo(() => {
     if (!summary || !user) {
       return [];
@@ -179,6 +169,8 @@ function DeliveryDashboard() {
       (task) => task.createdBy === user.id || task.assigneeId === user.id || task.reporterId === user.id
     );
   }, [summary, user]);
+
+  const myProjectIds = useMemo(() => new Set(myTasks.map((task) => task.projectId)), [myTasks]);
 
   const metrics = useMemo(() => {
     const total = myTasks.length;
@@ -191,16 +183,12 @@ function DeliveryDashboard() {
   }, [myTasks]);
 
   const focusProjects = useMemo(() => {
-    if (!summary || !user) {
+    if (!summary) {
       return [];
     }
 
-    const activeProjectIds = new Set(
-      summary.memberships.filter((item) => item.userId === user.id && item.status === 'ACTIVE').map((item) => item.projectId)
-    );
-
-    return summary.projects.filter((project) => activeProjectIds.has(project.id)).slice(0, 5);
-  }, [summary, user]);
+    return summary.projects.filter((project) => myProjectIds.has(project.id)).slice(0, 5);
+  }, [myProjectIds, summary]);
 
   const myWorkQueue = useMemo(() => {
     return [...myTasks]
@@ -247,12 +235,12 @@ function DeliveryDashboard() {
           <div>
             <p className="text-sm text-slate-400">{new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())}</p>
             <h2 className="mt-1 text-2xl font-bold tracking-tight text-white sm:text-3xl">
-              {getGreeting()}, {user?.displayName ?? user?.email?.split('@')[0] ?? 'there'}
+              {getGreeting()}, {user?.fullName ?? user?.email?.split('@')[0] ?? 'there'}
             </h2>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-300/90">Here's your execution snapshot — active tasks, progress, and the projects that need your attention today.</p>
           </div>
           <div className="flex items-center gap-3">
-            <Badge tone="info">{currentMembership?.role ?? user?.globalRole ?? 'Contributor'}</Badge>
+            <Badge tone="info">{user?.globalRole ?? 'Contributor'}</Badge>
             <Badge tone={metrics.overdue > 0 ? 'warning' : 'success'}>{metrics.overdue > 0 ? `${metrics.overdue} overdue` : 'On track'}</Badge>
           </div>
         </div>
@@ -385,7 +373,7 @@ function DeliveryDashboard() {
             {[
               { icon: '🏢', label: 'Workspaces', value: summary.workspaces.length, desc: 'Scopes you can currently navigate.' },
               { icon: '📁', label: 'Projects', value: summary.projects.length, desc: 'Execution surfaces from memberships.' },
-              { icon: '🛡️', label: 'Role', value: currentMembership?.role ?? 'Contributor', desc: 'Influences what you can move & approve.' },
+              { icon: '🛡️', label: 'Role', value: user?.globalRole ?? 'Contributor', desc: 'Influences what you can move & approve.' },
               { icon: '🎯', label: 'Specialization', value: user?.specialization ?? 'General', desc: 'Used for QA, UAT, or role-based gates.' },
             ].map((item) => (
               <div key={item.label} className="group rounded-2xl border border-white/[0.07] bg-white/[0.04] p-4 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.07]">
@@ -540,7 +528,7 @@ function SuperAdminDashboard() {
           <div>
             <p className="text-sm text-slate-400">{new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())}</p>
             <h2 className="mt-1 text-2xl font-bold tracking-tight text-white sm:text-3xl">
-              {getGreeting()}, {user?.displayName ?? 'Super Admin'}
+              {getGreeting()}, {user?.fullName ?? 'Super Admin'}
             </h2>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-300/90">Full platform overview — workspaces, spaces, projects, and memberships across every governed scope.</p>
           </div>
