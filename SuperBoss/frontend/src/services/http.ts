@@ -6,7 +6,19 @@ import {
   persistSession
 } from '../features/auth/store/sessionStorage';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api';
+function resolveApiBaseUrl() {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  if (typeof window !== 'undefined' && window.location.hostname === 'superboss-frontend.vercel.app') {
+    return 'https://superboss-backend-production.up.railway.app/api';
+  }
+
+  return 'http://localhost:4000/api';
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 let refreshPromise: Promise<AuthSession | null> | null = null;
 
