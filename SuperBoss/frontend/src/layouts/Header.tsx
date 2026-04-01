@@ -182,13 +182,13 @@ export function Header() {
   const topSignal = visibleSignals[0] ?? null;
 
   return (
-    <header className='sticky top-0 z-40 border-b border-white/10 bg-[linear-gradient(180deg,rgba(7,11,22,0.88)_0%,rgba(7,11,22,0.72)_100%)] shadow-[0_18px_40px_rgba(0,0,0,0.16)] backdrop-blur-2xl'>
+    <header className='sticky top-0 z-40 border-b border-white/8 bg-[linear-gradient(180deg,rgba(7,11,22,0.92)_0%,rgba(7,11,22,0.78)_100%)] shadow-[0_18px_40px_rgba(0,0,0,0.18)] backdrop-blur-2xl'>
       <div className='px-4 py-3 sm:px-6 lg:px-8'>
         <div className='flex items-center gap-3'>
           <button
             type='button'
             onClick={() => setMobileOpen((value) => !value)}
-            className='inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-slate-200 transition hover:bg-white/[0.1] lg:hidden'
+            className='inline-flex h-11 w-11 items-center justify-center rounded-[1rem] border border-white/10 bg-white/[0.05] text-slate-200 transition hover:bg-white/[0.1] lg:hidden'
             aria-label='Open navigation menu'
           >
             <Icon name='menu' className='h-5 w-5' />
@@ -196,23 +196,23 @@ export function Header() {
 
           <div className='min-w-0 flex-1'>
             <div className='min-w-0'>
-              <p className='truncate text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-[#b8c4ff]'>{currentPage.eyebrow}</p>
-              <h1 className='truncate text-lg font-semibold tracking-[-0.02em] text-white sm:text-xl'>{currentPage.title}</h1>
+              <p className='eyebrow-label truncate'>{currentPage.eyebrow}</p>
+              <h1 className='truncate text-lg font-semibold tracking-[-0.03em] text-white sm:text-[1.3rem]'>{currentPage.title}</h1>
             </div>
           </div>
           <div className='ml-auto flex items-center gap-2 sm:gap-3'>
-            <div className='hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-3 py-2 text-sm text-slate-300 shadow-[0_16px_32px_rgba(0,0,0,0.12)] lg:flex'>
+            <div className='hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-slate-300 shadow-[0_16px_32px_rgba(0,0,0,0.12)] lg:flex'>
               <Icon name='search' className='h-4 w-4 text-slate-400' />
               <input
                 type='text'
                 placeholder={location.pathname === '/projects' ? 'Search tasks, stages, or assignees' : 'Search workspaces, members, or project signals'}
-                className='w-[240px] bg-transparent text-sm text-white outline-none placeholder:text-slate-400'
+                className='w-[240px] bg-transparent text-sm text-white outline-none placeholder:text-slate-500'
               />
             </div>
 
             {workspaces.length > 1 ? (
               <div className='hidden min-w-[220px] xl:block'>
-                <Select value={selectedWorkspaceId ?? ''} onChange={(event) => handleWorkspaceChange(event.target.value || null)} className='h-11 bg-white/[0.06]'>
+                <Select value={selectedWorkspaceId ?? ''} onChange={(event) => handleWorkspaceChange(event.target.value || null)} className='h-11 bg-white/[0.05]'>
                   {workspaces.map((workspace) => (
                     <option key={workspace.id} value={workspace.id}>
                       {workspace.name}
@@ -248,11 +248,11 @@ export function Header() {
               </button>
 
               {notificationOpen ? (
-                <div className='absolute right-0 top-[calc(100%+0.9rem)] z-50 w-[min(26rem,calc(100vw-2rem))] overflow-hidden rounded-[1.8rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(143,156,255,0.24),transparent_30%),radial-gradient(circle_at_top_right,rgba(110,233,216,0.14),transparent_26%),linear-gradient(180deg,rgba(12,17,31,0.98)_0%,rgba(8,12,24,0.98)_100%)] shadow-[0_34px_90px_rgba(0,0,0,0.46)] backdrop-blur-2xl'>
+                <div className='absolute right-0 top-[calc(100%+0.9rem)] z-50 w-[min(26rem,calc(100vw-2rem))] overflow-hidden rounded-[1.6rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(127,151,255,0.2),transparent_32%),radial-gradient(circle_at_top_right,rgba(122,231,207,0.12),transparent_26%),linear-gradient(180deg,rgba(12,17,31,0.98)_0%,rgba(8,12,24,0.98)_100%)] shadow-[0_34px_90px_rgba(0,0,0,0.46)] backdrop-blur-2xl'>
                   <div className='border-b border-white/10 px-5 py-5'>
                     <div className='flex items-start justify-between gap-4'>
                       <div>
-                        <p className='text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-[#b8c4ff]'>Signal desk</p>
+                        <p className='eyebrow-label'>Signal desk</p>
                         <h3 className='mt-2 text-lg font-semibold tracking-[-0.02em] text-white'>Quick triage</h3>
                         <p className='mt-1 text-sm text-slate-300'>Only what needs action.</p>
                       </div>
@@ -264,15 +264,15 @@ export function Header() {
                     </div>
 
                     <div className='mt-5 grid gap-3 sm:grid-cols-3'>
-                      <div className='rounded-[1.2rem] border border-white/10 bg-white/[0.04] px-4 py-3'>
+                      <div className='surface-chip rounded-[1rem] px-4 py-3'>
                         <p className='text-[0.64rem] font-semibold uppercase tracking-[0.16em] text-slate-400'>Unread</p>
                         <p className='mt-2 text-2xl font-semibold tracking-[-0.03em] text-white'>{notificationCount}</p>
                       </div>
-                      <div className='rounded-[1.2rem] border border-[#6ee9d8]/16 bg-[#6ee9d8]/8 px-4 py-3'>
+                      <div className='rounded-[1rem] border border-[#6ee9d8]/16 bg-[#6ee9d8]/8 px-4 py-3'>
                         <p className='text-[0.64rem] font-semibold uppercase tracking-[0.16em] text-slate-400'>Planning</p>
                         <p className='mt-2 text-2xl font-semibold tracking-[-0.03em] text-white'>{unreadSignalCount}</p>
                       </div>
-                      <div className='rounded-[1.2rem] border border-[#f7c96c]/16 bg-[#f7c96c]/8 px-4 py-3'>
+                      <div className='rounded-[1rem] border border-[#f7c96c]/16 bg-[#f7c96c]/8 px-4 py-3'>
                         <p className='text-[0.64rem] font-semibold uppercase tracking-[0.16em] text-slate-400'>Invites</p>
                         <p className='mt-2 text-2xl font-semibold tracking-[-0.03em] text-white'>{pendingInviteCount}</p>
                       </div>
@@ -281,9 +281,9 @@ export function Header() {
 
                   <div className='max-h-[28rem] overflow-y-auto px-4 py-4'>
                     {isNotificationsLoading && notificationCount === 0 ? (
-                      <div className='rounded-[1.35rem] border border-white/10 bg-white/[0.04] px-4 py-5 text-sm text-slate-300'>Loading...</div>
+                      <div className='surface-chip rounded-[1.2rem] px-4 py-5 text-sm text-slate-300'>Loading...</div>
                     ) : notificationCount === 0 ? (
-                      <div className='rounded-[1.35rem] border border-white/10 bg-white/[0.04] px-4 py-5 text-sm text-slate-300'>Nothing new.</div>
+                      <div className='surface-chip rounded-[1.2rem] px-4 py-5 text-sm text-slate-300'>Nothing new.</div>
                     ) : (
                       <div className='space-y-4'>
                         {topSignal ? (

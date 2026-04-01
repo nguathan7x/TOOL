@@ -58,14 +58,14 @@ const PRIORITY_ICON: Record<string, string> = {
 
 function SummaryMetric({ label, value, note, icon, accentColor }: { label: string; value: number | string; note: string; icon: string; accentColor?: string }) {
   return (
-    <Card className="group relative overflow-hidden transition-all duration-300 hover:border-white/20 hover:shadow-[0_24px_80px_rgba(0,0,0,0.32)] hover:-translate-y-0.5">
-      <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: `radial-gradient(circle at 50% 0%, ${accentColor ?? 'rgba(184,196,255,0.08)'}, transparent 70%)` }} />
+    <Card className="group relative overflow-hidden rounded-[1.5rem] transition-all duration-300 hover:border-white/14 hover:shadow-[0_24px_80px_rgba(0,0,0,0.32)] hover:-translate-y-0.5">
+      <div className="absolute inset-0 opacity-80 transition-opacity duration-300" style={{ background: `radial-gradient(circle at 50% 0%, ${accentColor ?? 'rgba(184,196,255,0.08)'}, transparent 70%)` }} />
       <div className="relative">
         <div className="flex items-center justify-between">
-          <p className="text-xs uppercase tracking-[0.16em] text-[#b8c4ff]">{label}</p>
-          <span className="text-lg">{icon}</span>
+          <p className="eyebrow-label">{label}</p>
+          <span className="text-base">{icon}</span>
         </div>
-        <p className="mt-3 text-4xl font-bold tracking-tight text-white">{value}</p>
+        <p className="mt-4 text-[2.35rem] font-bold tracking-[-0.05em] text-white">{value}</p>
         <p className="mt-2 text-[13px] leading-relaxed text-slate-300/90">{note}</p>
       </div>
     </Card>
@@ -228,13 +228,13 @@ function DeliveryDashboard() {
   return (
     <div className="space-y-6 dashboard-fade-in">
       {/* Welcome banner */}
-      <Card className="relative overflow-hidden border-white/[0.08]">
-        <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gradient-to-br from-[#8ae6d9]/20 to-[#a5b4fc]/10 blur-3xl" />
-        <div className="absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-gradient-to-tr from-emerald-400/10 to-transparent blur-2xl" />
+      <Card className="surface-panel-raised relative overflow-hidden rounded-[1.9rem] border-white/[0.08]">
+        <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gradient-to-br from-[#7ae7cf]/16 to-[#7f97ff]/10 blur-3xl" />
+        <div className="absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-gradient-to-tr from-[#f4c56f]/10 to-transparent blur-2xl" />
         <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm text-slate-400">{new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())}</p>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            <p className="eyebrow-label text-[#9ab0ff]">{new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())}</p>
+            <h2 className="mt-3 text-[2rem] font-bold tracking-[-0.05em] text-white sm:text-[2.5rem]">
               {getGreeting()}, {user?.fullName ?? user?.email?.split('@')[0] ?? 'there'}
             </h2>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-300/90">Here's your execution snapshot — active tasks, progress, and the projects that need your attention today.</p>
@@ -256,11 +256,11 @@ function DeliveryDashboard() {
 
       {/* Work queue + Progress */}
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden rounded-[1.6rem]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.16em] text-[#8ae6d9]">My work queue</p>
-              <h3 className="mt-1 text-lg font-semibold text-white">What needs movement next</h3>
+              <p className="eyebrow-label text-[#7ae7cf]">My work queue</p>
+              <h3 className="mt-2 text-lg font-semibold tracking-[-0.03em] text-white">What needs movement next</h3>
             </div>
             {myWorkQueue.length > 0 && <Badge tone="neutral">{myWorkQueue.length} items</Badge>}
           </div>
@@ -268,7 +268,7 @@ function DeliveryDashboard() {
             {myWorkQueue.length > 0 ? myWorkQueue.map((task, idx) => {
               const isOverdue = task.status !== 'DONE' && task.dueDate && new Date(task.dueDate).getTime() < Date.now();
               return (
-                <div key={task.id} className="group relative rounded-2xl border border-white/[0.07] bg-white/[0.04] p-4 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.07]" style={{ animationDelay: `${idx * 60}ms` }}>
+                <div key={task.id} className="group relative rounded-[1.2rem] border border-white/[0.07] bg-white/[0.04] p-4 transition-all duration-200 hover:border-white/14 hover:bg-white/[0.07]" style={{ animationDelay: `${idx * 60}ms` }}>
                   <div className="absolute left-0 top-0 h-full w-[3px] rounded-l-2xl" style={{ backgroundColor: STATUS_COLORS[task.status] ?? '#94a3b8' }} />
                   <div className="flex items-start gap-3 pl-2">
                     <span className="mt-0.5 text-sm">{PRIORITY_ICON[task.priority] ?? '⚪'}</span>
@@ -300,8 +300,8 @@ function DeliveryDashboard() {
         </Card>
 
         <div className="space-y-6">
-          <Card>
-            <p className="text-xs uppercase tracking-[0.16em] text-[#b8c4ff]">Completion rate</p>
+          <Card className="rounded-[1.6rem]">
+            <p className="eyebrow-label">Completion rate</p>
             <div className="mt-4 flex items-center gap-6">
               <CircularProgress percent={metrics.completionRate} />
               <div>
@@ -311,8 +311,8 @@ function DeliveryDashboard() {
             </div>
           </Card>
 
-          <Card>
-            <p className="text-xs uppercase tracking-[0.16em] text-[#b8c4ff]">Status breakdown</p>
+          <Card className="rounded-[1.6rem]">
+            <p className="eyebrow-label">Status breakdown</p>
             <div className="mt-4 space-y-1.5">
               {statusBreakdown.map((item) => (
                 <StatusBar key={item.label} label={item.label} value={item.value} total={metrics.total} color={STATUS_COLORS[item.label === 'In Progress' ? 'IN_PROGRESS' : item.label.toUpperCase()] ?? '#94a3b8'} />
@@ -324,9 +324,9 @@ function DeliveryDashboard() {
 
       {/* Projects + Work context */}
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <Card>
+        <Card className="rounded-[1.6rem]">
           <div className="flex items-center justify-between">
-            <p className="text-xs uppercase tracking-[0.16em] text-[#b8c4ff]">Projects in focus</p>
+            <p className="eyebrow-label">Projects in focus</p>
             {focusProjects.length > 0 && <Badge tone="neutral">{focusProjects.length}</Badge>}
           </div>
           <div className="mt-4 space-y-2">
@@ -335,7 +335,7 @@ function DeliveryDashboard() {
               const projectDone = projectTasks.filter((t) => t.status === 'DONE').length;
               const projectPct = projectTasks.length > 0 ? Math.round((projectDone / projectTasks.length) * 100) : 0;
               return (
-                <div key={project.id} className="group rounded-2xl border border-white/[0.07] bg-white/[0.04] p-4 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.07]">
+                <div key={project.id} className="group rounded-[1.15rem] border border-white/[0.07] bg-white/[0.04] p-4 transition-all duration-200 hover:border-white/14 hover:bg-white/[0.07]">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
@@ -367,8 +367,8 @@ function DeliveryDashboard() {
           </div>
         </Card>
 
-        <Card>
-          <p className="text-xs uppercase tracking-[0.16em] text-[#b8c4ff]">Work context</p>
+        <Card className="rounded-[1.6rem]">
+          <p className="eyebrow-label">Work context</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {[
               { icon: '🏢', label: 'Workspaces', value: summary.workspaces.length, desc: 'Scopes you can currently navigate.' },
@@ -376,7 +376,7 @@ function DeliveryDashboard() {
               { icon: '🛡️', label: 'Role', value: user?.globalRole ?? 'Contributor', desc: 'Influences what you can move & approve.' },
               { icon: '🎯', label: 'Specialization', value: user?.specialization ?? 'General', desc: 'Used for QA, UAT, or role-based gates.' },
             ].map((item) => (
-              <div key={item.label} className="group rounded-2xl border border-white/[0.07] bg-white/[0.04] p-4 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.07]">
+              <div key={item.label} className="group rounded-[1.15rem] border border-white/[0.07] bg-white/[0.04] p-4 transition-all duration-200 hover:border-white/14 hover:bg-white/[0.07]">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">{item.icon}</span>
                   <p className="text-xs font-medium uppercase tracking-wider text-slate-400">{item.label}</p>

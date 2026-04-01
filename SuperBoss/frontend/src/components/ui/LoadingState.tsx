@@ -1,7 +1,10 @@
 export function LoadingState({ label = 'Loading...' }: { label?: string }) {
   return (
-    <div className="flex min-h-[240px] items-center justify-center rounded-3xl border border-dashed border-white/10 bg-white/6 text-sm text-slate-200 shadow-[0_18px_50px_rgba(0,0,0,0.2)] backdrop-blur-xl">
-      {label}
+    <div className="surface-panel flex min-h-[240px] items-center justify-center rounded-[1.75rem] border-dashed text-sm text-slate-300">
+      <div className="flex items-center gap-3">
+        <span className="h-2.5 w-2.5 rounded-full bg-[#7ae7cf] shadow-[0_0_18px_rgba(122,231,207,0.8)]" />
+        <span>{label}</span>
+      </div>
     </div>
   );
 }

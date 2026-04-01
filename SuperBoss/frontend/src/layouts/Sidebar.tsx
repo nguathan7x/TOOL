@@ -251,7 +251,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'sticky top-0 hidden h-screen shrink-0 flex-col border-r border-white/10 bg-[linear-gradient(180deg,rgba(6,10,20,0.94)_0%,rgba(8,12,24,0.92)_100%)] px-4 py-5 backdrop-blur-2xl transition-[width] duration-300 lg:flex',
+        'sticky top-0 hidden h-screen shrink-0 flex-col border-r border-white/8 bg-[linear-gradient(180deg,rgba(7,12,21,0.96)_0%,rgba(8,13,24,0.94)_100%)] px-4 py-5 backdrop-blur-2xl transition-[width] duration-300 lg:flex',
         collapsed ? 'w-[6.75rem]' : 'w-[21rem]'
       )}
     >
@@ -265,8 +265,8 @@ export function Sidebar() {
             <Avatar name={user?.fullName ?? 'Guest'} src={user?.avatarUrl} />
             {!collapsed ? (
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-white">{user?.fullName ?? 'Guest'}</p>
-                <p className="truncate text-xs text-slate-300">{user?.email ?? 'No active session'}</p>
+                <p className="truncate text-sm font-semibold tracking-[-0.01em] text-white">{user?.fullName ?? 'Guest'}</p>
+                <p className="truncate text-xs text-slate-400">{user?.email ?? 'No active session'}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Badge tone="info">{user?.globalRole ?? 'Scoped access'}</Badge>
                   <Badge>{user?.specialization ?? 'Unknown'}</Badge>

@@ -18,15 +18,15 @@ export function SidebarSection({
   return (
     <section
       className={cn(
-        'rounded-[1.55rem] border border-white/10 bg-white/[0.05] shadow-[0_18px_50px_rgba(0,0,0,0.2)] backdrop-blur-xl',
+        'surface-panel rounded-[1.45rem]',
         collapsed ? 'p-3' : 'p-4',
         className
       )}
     >
       {!collapsed ? (
         <div className="mb-4">
-          {eyebrow ? <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-[#8ae6d9]">{eyebrow}</p> : null}
-          <h3 className={cn('font-semibold text-white', eyebrow ? 'mt-3 text-base' : 'text-sm uppercase tracking-[0.18em] text-slate-300')}>
+          {eyebrow ? <p className="eyebrow-label text-[#8ab9ff]">{eyebrow}</p> : null}
+          <h3 className={cn('section-heading font-semibold text-white', eyebrow ? 'mt-3 text-[1.02rem]' : 'text-sm uppercase tracking-[0.18em] text-slate-300')}>
             {title}
           </h3>
         </div>

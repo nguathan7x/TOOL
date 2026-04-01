@@ -80,11 +80,11 @@ export function SidebarNavItem({ to, label, description, icon, badge, collapsed 
       title={title ?? label}
       className={({ isActive }) =>
         cn(
-          'group relative flex items-center gap-3 rounded-[1.15rem] border px-3 py-3 transition',
+          'group relative flex items-center gap-3 rounded-[1.1rem] border px-3 py-3 transition-all duration-200',
           collapsed ? 'justify-center px-0' : '',
           isActive
-            ? 'border-white/14 bg-white/[0.1] text-white shadow-[0_12px_28px_rgba(0,0,0,0.18)]'
-            : 'border-transparent bg-white/[0.03] text-slate-300 hover:border-white/10 hover:bg-white/[0.06] hover:text-white'
+            ? 'border-[#90a8ff]/20 bg-[linear-gradient(135deg,rgba(127,151,255,0.16)_0%,rgba(122,231,207,0.09)_100%)] text-white shadow-[0_14px_34px_rgba(0,0,0,0.2)]'
+            : 'border-transparent bg-white/[0.025] text-slate-300 hover:border-white/10 hover:bg-white/[0.06] hover:text-white'
         )
       }
     >
@@ -94,7 +94,7 @@ export function SidebarNavItem({ to, label, description, icon, badge, collapsed 
             className={cn(
               'inline-flex shrink-0 items-center justify-center rounded-xl border p-2.5 transition',
               isActive
-                ? 'border-[#8f9cff]/24 bg-[linear-gradient(135deg,rgba(143,156,255,0.18)_0%,rgba(110,233,216,0.14)_100%)] text-white'
+                ? 'border-[#8f9cff]/24 bg-[linear-gradient(135deg,rgba(127,151,255,0.2)_0%,rgba(122,231,207,0.12)_100%)] text-white'
                 : 'border-white/10 bg-white/[0.05] text-slate-200 group-hover:border-white/16'
             )}
           >
@@ -106,7 +106,7 @@ export function SidebarNavItem({ to, label, description, icon, badge, collapsed 
               <span className="flex items-center justify-between gap-3">
                 <span className="truncate text-sm font-semibold">{label}</span>
                 {badge !== undefined ? (
-                  <span className="rounded-full border border-white/10 bg-white/[0.06] px-2 py-0.5 text-[0.68rem] font-semibold text-slate-200">
+                  <span className="rounded-full border border-white/10 bg-white/[0.06] px-2 py-0.5 text-[0.68rem] font-semibold text-slate-100">
                     {badge}
                   </span>
                 ) : null}
@@ -115,7 +115,7 @@ export function SidebarNavItem({ to, label, description, icon, badge, collapsed 
             </span>
           ) : null}
 
-          {isActive && !collapsed ? <span className="pointer-events-none absolute inset-y-3 left-0 w-[3px] rounded-r-full bg-[linear-gradient(180deg,#8f9cff_0%,#6ee9d8_100%)]" /> : null}
+          {isActive && !collapsed ? <span className="pointer-events-none absolute inset-y-3 left-0 w-[3px] rounded-r-full bg-[linear-gradient(180deg,#7f97ff_0%,#7ae7cf_100%)]" /> : null}
         </>
       )}
     </NavLink>
