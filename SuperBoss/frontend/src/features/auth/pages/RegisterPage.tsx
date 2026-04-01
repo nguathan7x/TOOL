@@ -83,28 +83,36 @@ export function RegisterPage() {
 
   return (
     <AuthLayout
-      eyebrow="Team onboarding"
-      title="Create a workspace-ready account with room for Google OAuth later."
-      description="Set up an account for structured team delivery, then continue into a product shell built for assignment visibility, governed workflow, and role-based collaboration."
-      badge={<div className="rounded-full border border-white/12 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/85">Future-ready auth</div>}
+      eyebrow="Professional onboarding"
+      title="Create your account and enter a cleaner, more structured workspace experience."
+      description="Register with your work email to access SuperBoss and collaborate across projects, assignments, approvals, and delivery progress in a polished internal platform."
+      badge={
+        <div className="rounded-full border border-emerald-200/25 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/85 backdrop-blur">
+          Secure team onboarding
+        </div>
+      }
     >
       <AuthCard>
         <AuthHeader
           label="Create account"
-          title="Start with a polished access flow"
-          description="Use email and password today, or continue directly with Google if OAuth is enabled for this workspace."
-          brandSlot={<div className="rounded-2xl border border-[#dbe6d8] bg-[#f7faf5] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#163d2c]">SB</div>}
+          title="Set up your SuperBoss access"
+          description="A refined sign-up flow for teams that need secure onboarding, consistent permissions, and a workspace that already feels production-ready."
+          brandSlot={
+            <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-[#f7faf5] to-[#eef6ef] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#163d2c] shadow-sm">
+              SB
+            </div>
+          }
         />
 
-        <div className="mt-8 space-y-5">
+        <div className="mt-8 space-y-6">
           <GoogleIdentityButton mode="signup" onError={setError} disabled={isSubmitting} />
 
           <Divider />
 
-          <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+          <form className="space-y-5" onSubmit={handleSubmit} noValidate>
             <InputField
               label="Full name"
-              placeholder="Avery System"
+              placeholder="Nguyen Van A"
               autoComplete="name"
               value={fullName}
               onBlur={() => setTouched((current) => ({ ...current, fullName: true }))}
@@ -113,9 +121,9 @@ export function RegisterPage() {
             />
 
             <InputField
-              label="Email"
+              label="Work email"
               type="email"
-              placeholder="you@company.com"
+              placeholder="name@company.com"
               autoComplete="email"
               value={email}
               onBlur={() => setTouched((current) => ({ ...current, email: true }))}
@@ -123,10 +131,10 @@ export function RegisterPage() {
               error={touched.email ? fieldErrors.email : undefined}
             />
 
-            <div className="space-y-3">
+            <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
               <PasswordField
                 label="Password"
-                placeholder="Create a password"
+                placeholder="Create a strong password"
                 autoComplete="new-password"
                 value={password}
                 onBlur={() => setTouched((current) => ({ ...current, password: true }))}
@@ -139,7 +147,7 @@ export function RegisterPage() {
 
             <PasswordField
               label="Confirm password"
-              placeholder="Repeat your password"
+              placeholder="Re-enter your password"
               autoComplete="new-password"
               value={confirmPassword}
               onBlur={() => setTouched((current) => ({ ...current, confirmPassword: true }))}
@@ -148,11 +156,13 @@ export function RegisterPage() {
             />
 
             {error ? (
-              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div>
+              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                {error}
+              </div>
             ) : null}
 
             <SubmitButton type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Creating your account...' : 'Create account'}
+              {isSubmitting ? 'Creating your account...' : 'Create workspace account'}
             </SubmitButton>
           </form>
         </div>
@@ -160,7 +170,11 @@ export function RegisterPage() {
         <div className="mt-6">
           <AuthFooter
             prompt="Already have an account?"
-            action={<Link to="/login" className="transition hover:text-[#102f22]">Sign in</Link>}
+            action={
+              <Link to="/login" className="font-semibold transition hover:text-[#102f22]">
+                Sign in
+              </Link>
+            }
           />
         </div>
       </AuthCard>
