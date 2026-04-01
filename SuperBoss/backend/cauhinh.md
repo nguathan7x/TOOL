@@ -1,0 +1,14 @@
+MONGODB_URI=mongodb://127.0.0.1:27017/todoapp
+PORT=5001
+
+JWT_ACCESS_SECRET=9a9f8d2b6c1f3e5a4d2f8b6c1e2f3a4b6d7c8e9f0a1b2c3d4e5f67890abcdef1
+JWT_ACCESS_EXPIRES_IN=8h
+JWT_REFRESH_SECRET=b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2
+JWT_REFRESH_EXPIRES_IN=7d
+
+CLIENT_URLS=http://localhost:5173,http://localhost:5184,http://127.0.0.1:5173,http://127.0.0.1:5184
+JSON_BODY_LIMIT=15mb
+
+GOOGLE_CLIENT_ID=821784060578-qi9mbhhcus3eh16bh80idkr01mqftkp3.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+GOOGLE_REDIRECT_URI=http://localhost:5173/auth/google/callback
